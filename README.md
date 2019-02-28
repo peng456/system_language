@@ -21,3 +21,79 @@ C 语言可以写操作系统，就是他能更好的 操作 CPU、存储。
 其实用PHP 也能实现MySQL。数据库这个产品，本身对外提供服务，有自己的协议。如果 你用PHP实现了一个数据，对外提供服务协议跟mysql的一样。你用PHP实现的数据库，也可以叫PHP,只是会有版权问题而已。  
 
 为啥非得用PHP 在实现一遍呢。真无语。 但是这是面试。在这记录一下。  
+
+
+参考
+http://www.php.net/manual/zh/function.array-multisort.php
+https://www.cnblogs.com/M-D-Luffy/p/4224127.html  
+
+
+$data[] = array('volume' => 67, 'edition' => 2);
+$data[] = array('volume' => 86, 'edition' => 1);
+$data[] = array('volume' => 85, 'edition' => 6);
+$data[] = array('volume' => 98, 'edition' => 2);
+$data[] = array('volume' => 86, 'edition' => 6);
+$data[] = array('volume' => 67, 'edition' => 7);
+
+// 取得列的列表
+foreach ($data as $key => $row) {
+    $volume[$key]  = $row['volume'];
+    $edition[$key] = $row['edition'];
+}
+
+// 将数据根据 volume 降序排列，根据 edition 升序排列
+// 把 $data 作为最后一个参数，以通用键排序
+array_multisort($volume, SORT_DESC, $edition, SORT_ASC, $data);
+
+
+改进===》
+
+$data[] = array('volume' => 67, 'edition' => 2);
+$data[] = array('volume' => 86, 'edition' => 1);
+$data[] = array('volume' => 85, 'edition' => 6);
+$data[] = array('volume' => 98, 'edition' => 2);
+$data[] = array('volume' => 86, 'edition' => 6);
+$data[] = array('volume' => 67, 'edition' => 7);
+
+$a = array_column($data, 'volume');
+
+$b = array_column($data, 'edition');
+
+$sort = array_multisort ($a, SORT_DESC,$b,SORT_DESC, $data);
+var_dump($data);
+die();
+
+
+改进====》
+
+$sort = array();
+$sort = array(
+    array('id'=>'desc'),
+    array('name'=>'asc'),
+    array('num'=>'desc'),
+);
+
+// 取得列的列表
+
+// 取得列的列表
+foreach ($sort as $key => $row) {
+   foreach ($data as $key => $row) {
+       $volume[$key]  = $row['volume'];
+       $edition[$key] = $row['edition'];
+}
+
+$param = array();
+froeach($sort as $value)
+{
+  $param[] = array_column($data, $value['key']);
+  $param[] = $value['value'] ? $value['value'] : 'SORT_DESC' ;
+}
+
+$param[] = $data;
+
+call_user_func_array('array_multisort', $param); 
+
+
+
+
+
